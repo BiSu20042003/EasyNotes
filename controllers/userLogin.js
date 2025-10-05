@@ -103,10 +103,10 @@ module.exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid username or password.' });
         }
 
-        // if (!user.isVerified) {
-        //     await sendVerificationEmail(user);
-        //     return res.status(403).json({ message: 'Your account is not verified. A new verification code has been sent to your email.' });
-        // }
+        if (!user.isVerified) {
+            await sendVerificationEmail(user);
+            return res.status(403).json({ message: 'Your account is not verified. A new verification code has been sent to your email.' });
+        }
 
         const token = generateToken(user);
         res.status(200).json({ message: 'Logged in successfully!', token, user: { _id: user._id, username: user.username } });
