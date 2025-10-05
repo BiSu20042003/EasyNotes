@@ -1,15 +1,16 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+//const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-});
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+// const transporter = nodemailer.createTransport({
+//     service: 'Gmail',
+//     auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//     },
+// });
 
 const generateToken = (user) => {
     return jwt.sign({ _id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -21,8 +22,18 @@ const sendVerificationEmail = async (user) => {
     user.verificationCodeExpires = Date.now() + 3600000; //1 hour
     await user.save();
 
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+    // await transporter.sendMail({
+    //     from: process.env.EMAIL_USER,
+    //     to: user.email,
+    //     subject: 'Verify Your Email to enjoy </EasyNotes>',
+    //     html: `<h3>Hello ${user.username},</h3>
+    //            <p>Thank you for registering. Please use the following code to verify your account:</p>
+    //            <h2><strong>${code}</strong></h2>
+    //            <p>This code is valid for 1 hour.</p>`,
+    // });
+
+      await resend.emails.send({
+        from: 'EasyNotes <onboarding@resend.dev>',
         to: user.email,
         subject: 'Verify Your Email to enjoy </EasyNotes>',
         html: `<h3>Hello ${user.username},</h3>
@@ -38,15 +49,27 @@ const sendResetCodeEmail = async (user) => {
   user.resetPasswordExpires = Date.now() + 15*60*1000; //15 minutes
   await user.save();
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: user.email,
-    subject: 'Your </EasyNotes> password reset code',
-    html: `<h3>Hello ${user.username},</h3>
-           <p>Use this code to reset your password:</p>
-           <h2><strong>${code}</strong></h2>
-           <p>This code expires in 15 minutes.</p>`,
-  });
+  // await transporter.sendMail({
+  //   from: process.env.EMAIL_USER,
+  //   to: user.email,
+  //   subject: 'Your </EasyNotes> password reset code',
+  //   html: `<h3>Hello ${user.username},</h3>
+  //          <p>Use this code to reset your password:</p>
+  //          <h2><strong>${code}</strong></h2>
+  //          <p>This code expires in 15 minutes.</p>`,
+  // });
+
+
+  
+    await resend.emails.send({
+        from: 'EasyNotes <onboarding@resend.dev>',
+        to: user.email,
+        subject: 'Your </EasyNotes> password reset code',
+        html: `<h3>Hello ${user.username},</h3>
+               <p>Use this code to reset your password:</p>
+               <h2><strong>${code}</strong></h2>
+               <p>This code expires in 15 minutes.</p>`,
+    });
 };
 
 
