@@ -104,7 +104,7 @@ module.exports.login = async (req, res) => {
         }
 
         if (!user.isVerified) {
-            await sendVerificationEmail(user);
+            //await sendVerificationEmail(user);
             return res.status(403).json({ message: 'Your account is not verified. A new verification code has been sent to your email.' });
         }
 
