@@ -15,24 +15,24 @@ const reviewRouter = require('./routes/review.js');
 const cloudinaryRoutes = require('./routes/uploadToCloud.js');
 
 const app = express();
-
-// mongoose.connect(process.env.ATLAS_URL)
-//     .then(() => console.log('Connected to MongoDB'))
-//     .catch(err => console.error('DB Connection Error:', err));
+console.log("DEBUG → MONGO_URI =", process.env.ATLAS_URL);
+mongoose.connect(process.env.ATLAS_URL)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('DB Connection Error:', err));
 
 app.use(helmet({ contentSecurityPolicy: false })); 
 
-const PORT = process.env.PORT || 8080;
-mongoose.connect(process.env.ATLAS_URL)
-    .then(() => {
-        console.log('Connected to MongoDB');
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-    })
-    .catch(err => {
-        console.error('DB Connection Error:', err);
-    });
+// const PORT = process.env.PORT || 8080;
+// mongoose.connect(process.env.ATLAS_URL)
+//     .then(() => {
+//         console.log('Connected to MongoDB');
+//         app.listen(PORT, () => {
+//             console.log(`Server is running on port ${PORT}`);
+//         });
+//     })
+//     .catch(err => {
+//         console.error('DB Connection Error:', err);
+//     });
 
 
 
@@ -64,10 +64,10 @@ app.use(passport.initialize());
 passport.use(new LocalStrategy(User.authenticate()));
 
 
-/*const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-});*/
+});
 
 app.use('/author', authorRouter);
 app.use('/users', userRouter);
