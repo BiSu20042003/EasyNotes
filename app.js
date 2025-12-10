@@ -50,7 +50,10 @@ app.use(express.json({ limit: '10mb' }));
 
 app.use(passport.initialize());
 passport.use(new LocalStrategy(User.authenticate()));
-
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 app.use('/author', authorRouter);
 app.use('/users', userRouter);
@@ -63,7 +66,3 @@ app.use((err, req, res, next) => {
     res.status(statusCode).json({ message });
 });
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
